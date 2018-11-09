@@ -8,6 +8,7 @@
         android:background="@color/md_grey_800"
         tools:context=".CoreModules.SplashActivity">
 
+<!--
 
     <android.support.v7.widget.CardView
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -18,9 +19,9 @@
             android:layout_marginRight="@dimen/activity_small_margin"
             android:layout_marginLeft="@dimen/activity_small_margin"
             card_view:cardBackgroundColor="@color/md_white_1000"
-            card_view:cardCornerRadius="5dp"
             card_view:cardElevation="10dp"
             card_view:cardUseCompatPadding="true">
+-->
 
 
         <TextView android:layout_width="match_parent" android:layout_height="match_parent"
@@ -50,7 +51,6 @@
                 android:layout_marginBottom="75dp"
         />
 
-    </android.support.v7.widget.CardView>
 
 
     <LinearLayout android:orientation="vertical"

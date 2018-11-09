@@ -72,7 +72,7 @@ public class SplashActivity extends CoreActivity {
 
         YoYo.with(Techniques.ZoomInDown)
                 .duration(1500)
-                .playOn(findViewById(R.id.card_view));
+                .playOn(findViewById(R.id.txtvw_title));
 
     }
 
@@ -136,7 +136,7 @@ public class SplashActivity extends CoreActivity {
                 handler.post(() -> {
 
                     progressBar.setVisibility(View.GONE);
-                   // Constants.globalStartIntent(SplashActivity.this, RenderFile.class, null);
+                    Constants.globalStartIntent(SplashActivity.this, RenderFile.class, null);
 
                 });
             }

@@ -7,6 +7,16 @@
     <integer name="anim_duration_medium">300</integer>
     <integer name="anim_duration_long">400</integer>
 
+    <!-- GL Settings -->
+    <string name="toggle_wireframe">Toggle wireframe</string>
+    <string name="toggle_textures">Toggle textures</string>
+    <string name="toggle_lights">Toggle lights</string>
+    <string name="toggle_animation">Toggle animation</string>
+    <!--<string name="toggle_skeleton">Toggle skeleton</string>-->
+    <string name="toggle_boundingbox">Toggle bounding box</string>
+    <string name="load_texture">Load texture</string>
+
+    <string name="action_settings">Settings</string>
 
 
 </resources>
