@@ -2,44 +2,58 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent" android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/md_white_1000"
+        android:background="@color/md_grey_800"
         tools:context=".CoreModules.SplashActivity">
 
 
-    <LinearLayout android:orientation="vertical"
-                  android:layout_weight="1" android:layout_width="match_parent" android:layout_height="match_parent">
+    <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/activity_small_margin"
+            android:layout_marginLeft="@dimen/activity_small_margin"
+            card_view:cardBackgroundColor="@color/md_white_1000"
+            card_view:cardCornerRadius="5dp"
+            card_view:cardElevation="10dp"
+            card_view:cardUseCompatPadding="true">
+
 
         <android.support.v7.widget.AppCompatImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/logo"
+                android:background="@drawable/logo_trans"
+                android:padding="10dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="65dp"
+                android:layout_marginBottom="75dp"
         />
 
-        <android.support.v7.widget.CardView
-                android:layout_marginTop="50dp"
-                android:paddingBottom="10dp"
-                app:cardBackgroundColor="@color/md_white_1000"
-                android:layout_marginLeft="@dimen/activity_large_margin"
-                android:layout_marginRight="@dimen/activity_large_margin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    </android.support.v7.widget.CardView>
 
-            <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-                      android:text="@string/app_name"
-                      android:fontFamily="@font/wedgie"
-                      android:layout_gravity="bottom"
-                      android:gravity="center"
-                      android:textSize="50dp"
-                      android:textAppearance="?android:attr/textAppearanceLarge"
-                      android:textColor="@color/colorPrimary"
-            />
 
-        </android.support.v7.widget.CardView>
+    <LinearLayout android:orientation="vertical"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:layout_weight="1" android:layout_width="match_parent" android:layout_height="match_parent">
 
+
+        <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                  android:text="@string/app_name"
+                  android:id="@+id/txtvw_title"
+                  android:fontFamily="@font/wedgie"
+                  android:layout_gravity="bottom"
+                  android:gravity="center"
+                  android:textSize="45dp"
+                  android:padding="@dimen/activity_large_margin"
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginRight="10dp"
+                  android:textAppearance="?android:attr/textAppearanceLarge"
+                  android:textColor="@color/colorPrimary"
+        />
 
     </LinearLayout>
 
@@ -49,7 +63,7 @@
             android:layout_gravity="center"
             android:textAlignment="center"
             android:textColor="@color/md_white_1000"
-            android:paddingBottom="@dimen/activity_small_margin"
+            android:padding="@dimen/activity_small_margin"
             android:background="@color/colorPrimary"
             android:layout_width="match_parent" android:layout_height="wrap_content"/>
 

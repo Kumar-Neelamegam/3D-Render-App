@@ -3,6 +3,8 @@ package com.asoss.a3drender.app.CoreModules;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import com.asoss.a3drender.app.R;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 
 /**
  * Kumar Neelamegam
@@ -31,6 +33,13 @@ public class SplashActivity extends AppCompatActivity {
 
     private void GetInitialize() {
 
+        YoYo.with(Techniques.FadeInRight)
+                .duration(2500)
+                .playOn(findViewById(R.id.txtvw_title));
+
+        YoYo.with(Techniques.ZoomInDown)
+                .duration(1500)
+                .playOn(findViewById(R.id.card_view));
 
     }
 
