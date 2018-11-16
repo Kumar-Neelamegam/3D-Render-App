@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +24,7 @@ import java.io.IOException;
  *
  * @author andresoviedo
  */
-public class ModelActivity extends Activity {
+public class ModelActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_LOAD_TEXTURE = 1000;
 
@@ -78,7 +79,7 @@ public class ModelActivity extends Activity {
 
         // Create our 3D sceneario
         if (paramUri == null) {
-          //  scene = new ExampleSceneLoader(this);
+            //  scene = new ExampleSceneLoader(this);// To load default spl
         } else {
             scene = new SceneLoader(this);
         }
@@ -101,11 +102,13 @@ public class ModelActivity extends Activity {
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setupActionBar() {
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-        // getActionBar().setDisplayHomeAsUpEnabled(true);
-        // }
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -121,30 +124,30 @@ public class ModelActivity extends Activity {
             return;
         }
         //@commented for testing @kumar
-       getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
+       /* getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
             // Note that system bars will only be "visible" if none of the
             // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
             if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
                 // The system bars are visible. Make any desired
                 if (immersiveMode) hideSystemUIDelayed(5000);
             }
-        });
+        });*/
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
+       /* if (hasFocus) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 if (immersiveMode) hideSystemUIDelayed(5000);
             }
-        }
+        }*/
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-           case R.id.model_toggle_wireframe:
+            case R.id.model_toggle_wireframe:
                 scene.toggleWireframe();
                 break;
             case R.id.model_toggle_boundingbox:

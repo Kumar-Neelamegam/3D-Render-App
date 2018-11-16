@@ -6,10 +6,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.widget.Toast;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.asoss.a3drender.app.R;
 import com.asoss.a3drender.app.RenderUtils.ModelActivity;
+import com.imagepicker.LifeCycleCallBackManager;
+import com.luseen.spacenavigation.SpaceItem;
+import com.luseen.spacenavigation.SpaceNavigationView;
+import com.luseen.spacenavigation.SpaceOnClickListener;
 import org.andresoviedo.util.android.AndroidUtils;
 import org.andresoviedo.util.android.ContentUtils;
 import org.andresoviedo.util.android.FileUtils;
@@ -18,16 +23,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RenderFile extends AppCompatActivity
-{
+public class RenderFile extends AppCompatActivity {
 
 
-    private static final String REPO_URL = "https://github.com/andresoviedo/android-3D-model-viewer/raw/master/models/index";
+    //Declaration
+    //***************************************************************************************
+
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 1000;
-    private static final int REQUEST_INTERNET_ACCESS = 1001;
-    private static final int REQUEST_CODE_OPEN_FILE = 1101;
-    private static final int REQUEST_CODE_OPEN_MATERIAL = 1102;
-    private static final int REQUEST_CODE_OPEN_TEXTURE = 1103;
     private static final String SUPPORTED_FILE_TYPES_REGEX = "(?i).*\\.(obj|stl|dae)";
 
 
@@ -41,18 +43,21 @@ public class RenderFile extends AppCompatActivity
      */
     private Map<String, Object> loadModelParameters = new HashMap<>();
 
+    @BindView(R.id.bottom_navi)
+    SpaceNavigationView spaceNavigationView;
+    private LifeCycleCallBackManager lifeCycleCallBackManager;
 
 
-    Button Btn_LoadModel;
+    //***************************************************************************************
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_render);
 
-
         try {
-            GET_INITIALIZE();
+            GET_INITIALIZE(savedInstanceState);
             CONTROLLISTENERS();
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,17 +66,72 @@ public class RenderFile extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        spaceNavigationView.onSaveInstanceState(outState);
+    }
+
+
+
+    //***************************************************************************************
+
+    private void GET_INITIALIZE(Bundle savedInstanceState) {
+
+        ButterKnife.bind(this);
+
+        spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
+        spaceNavigationView.addSpaceItem(new SpaceItem("HOME", R.drawable.ic_action_home));
+        spaceNavigationView.addSpaceItem(new SpaceItem("LOAD", R.drawable.ic_action_load));
+        spaceNavigationView.shouldShowFullBadgeText(true);
+        spaceNavigationView.setCentreButtonIconColorFilterEnabled(false);
+
+    }
+
+    //***************************************************************************************
+
     private void CONTROLLISTENERS() {
 
-        Btn_LoadModel.setOnClickListener(new View.OnClickListener() {
+        // LoadFromSDCard();
+
+        spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onCentreButtonClick() {
+               // Toast.makeText(RenderFile.this,"onCentreButtonClick", Toast.LENGTH_SHORT).show();
+                OpenCamera();
+            }
 
-               LoadFromSDCard();
+            @Override
+            public void onItemClick(int itemIndex, String itemName) {
+               // Toast.makeText(RenderFile.this, itemIndex + " " + itemName, Toast.LENGTH_SHORT).show();
+                if(itemIndex==1)//Load model from sd card
+                {
+                    LoadFromSDCard();
+                }
+            }
 
+            @Override
+            public void onItemReselected(int itemIndex, String itemName) {
+               // Toast.makeText(RenderFile.this, itemIndex + " " + itemName, Toast.LENGTH_SHORT).show();
+                if(itemIndex==1)//Load model from sd card
+                {
+                    LoadFromSDCard();
+                }
             }
         });
+
+
     }
+
+
+    private void OpenCamera() {
+
+
+
+    }
+
+
+    //***************************************************************************************
 
     private void LoadFromSDCard() {
 
@@ -90,12 +150,7 @@ public class RenderFile extends AppCompatActivity
 
     }
 
-    private void GET_INITIALIZE() {
-
-        Btn_LoadModel = findViewById(R.id.btn_load_model);
-
-    }
-
+    //***************************************************************************************
 
     private void launchModelRendererActivity(Uri uri) {
         Log.i("Menu", "Launching renderer for '" + uri + "'");
@@ -112,4 +167,6 @@ public class RenderFile extends AppCompatActivity
         startActivity(intent);
     }
 
-}
+    //***************************************************************************************
+
+}//END

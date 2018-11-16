@@ -9,13 +9,13 @@
             android:title="@string/load_texture"/>
     <item
             android:id="@+id/model_toggle_wireframe"
-            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:icon="@drawable/ic_action_options"
             android:orderInCategory="200"
             app:showAsAction="ifRoom"
             android:title="@string/toggle_wireframe"/>
     <item
             android:id="@+id/model_toggle_lights"
-            android:icon="@android:drawable/ic_menu_compass"
+            android:icon="@drawable/ic_action_focus"
             android:orderInCategory="300"
             app:showAsAction="ifRoom"
             android:title="@string/toggle_lights"/>

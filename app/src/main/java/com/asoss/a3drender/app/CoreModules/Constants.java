@@ -29,7 +29,7 @@ public class Constants {
         if (bundle != null) {
             intent.putExtras(bundle);
         }
-        CustomIntent.customType(context, 4);
+        CustomIntent.customType(context, 1);
         context.startActivity(intent);
 
     }

@@ -3,9 +3,12 @@ package com.asoss.a3drender.app.CoreModules;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.asoss.a3drender.app.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -19,9 +22,10 @@ public class SplashActivity extends CoreActivity {
 
     //***************************************************************************************
     //Declaration
+    @BindView(R.id.txtvw_title) TextView txtvwTitle;
+    @BindView(R.id.img_logo) AppCompatImageView imgLogo;
+    @BindView(R.id.progressbar) ProgressBar progressbar;
 
-    ProgressBar progressBar;
-    TextView progress_status;
 
     private int progress = 0;
     private int progressStatus = 0;
@@ -64,15 +68,12 @@ public class SplashActivity extends CoreActivity {
 
     private void GetInitialize() {
 
-        progressBar=findViewById(R.id.progressBar);
+        ButterKnife.bind(this);
 
         YoYo.with(Techniques.FadeInRight)
-                .duration(2500)
-                .playOn(findViewById(R.id.txtvw_title));
-
-        YoYo.with(Techniques.ZoomInDown)
                 .duration(1500)
-                .playOn(findViewById(R.id.txtvw_title));
+                .playOn(findViewById(R.id.img_logo));
+
 
     }
 
@@ -128,14 +129,13 @@ public class SplashActivity extends CoreActivity {
                     progressStatus = doSomeWork();
 
                     handler.post(() -> {
-                        progressBar.setProgress(progressStatus);
-                       // progress_status.setText((String.valueOf(progressStatus))+" %");
+                        progressbar.setProgress(progressStatus);
                     });
                 }
 
                 handler.post(() -> {
 
-                    progressBar.setVisibility(View.GONE);
+                    progressbar.setVisibility(View.GONE);
                     Constants.globalStartIntent(SplashActivity.this, RenderFile.class, null);
 
                 });
@@ -143,7 +143,7 @@ public class SplashActivity extends CoreActivity {
 
             private int doSomeWork() {
                 try {
-                    // ---simulate doing some work---
+
                     Thread.sleep(30L);
 
                 } catch (InterruptedException e) {

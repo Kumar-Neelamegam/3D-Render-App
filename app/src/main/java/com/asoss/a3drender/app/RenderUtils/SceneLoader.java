@@ -339,7 +339,8 @@ public class SceneLoader implements LoaderTask.Callback {
             allErrors.addAll(data.getErrors());
         }
         if (!allErrors.isEmpty()){
-            makeToastText(allErrors.toString(), Toast.LENGTH_LONG);
+          // makeToastText(allErrors.toString(), Toast.LENGTH_LONG);
+            Log.e("Error-SceneLoader: ", allErrors.toString());
         }
         final String elapsed = (SystemClock.uptimeMillis() - startTime) / 1000 + " secs";
         makeToastText("Build complete (" + elapsed + ")", Toast.LENGTH_LONG);
