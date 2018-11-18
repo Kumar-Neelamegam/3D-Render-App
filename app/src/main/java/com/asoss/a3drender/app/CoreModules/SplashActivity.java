@@ -136,7 +136,7 @@ public class SplashActivity extends CoreActivity {
                 handler.post(() -> {
 
                     progressbar.setVisibility(View.GONE);
-                    Constants.globalStartIntent(SplashActivity.this, RenderFile.class, null);
+                    Constants.globalStartIntent(SplashActivity.this, RenderFile.class, null,1);
 
                 });
             }

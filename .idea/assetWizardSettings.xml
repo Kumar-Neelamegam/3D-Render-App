@@ -81,9 +81,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_bg_cricle" />
-                            <entry key="sourceFile" value="C:\Users\User" />
+                            <entry key="outputName" value="ic_vector_transform" />
+                            <entry key="sourceFile" value="C:\Users\KUMAR NEELAMEGAM\Desktop\Temp\if_interface-70_809255.svg" />
                           </map>
                         </option>
                       </PersistentState>

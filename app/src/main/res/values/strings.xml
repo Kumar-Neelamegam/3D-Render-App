@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">3D Render</string>
 
+    <string name="are_you_sure_want_to_exit">Are you sure want to exit?</string>
+    <string name="message_title">Information</string>
+    <string name="exit">Exit</string>
 
     <string name="runtime_permissions_txt">Please enable ALL permissions from app settings.</string>
 
