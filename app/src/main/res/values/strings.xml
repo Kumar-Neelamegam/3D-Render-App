@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">3D Render</string>
+    <string name="app_name">Partscout</string>
 
     <string name="are_you_sure_want_to_exit">Are you sure want to exit?</string>
     <string name="message_title">Information</string>
@@ -20,6 +20,7 @@
     <string name="load_texture">Load texture</string>
 
     <string name="action_settings">Settings</string>
+    <string name="RETRY">Retry</string>
 
 
 </resources>

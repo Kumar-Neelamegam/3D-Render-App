@@ -6,16 +6,14 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,9 +22,11 @@ import android.view.ViewGroup;
 import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.asoss.a3drender.app.ImageProcessing.CropActivity;
+import com.asoss.a3drender.app.NetworkUtils.MatchClient;
 import com.asoss.a3drender.app.R;
 import com.asoss.a3drender.app.RenderUtils.ModelActivity;
+import com.asoss.a3drender.app.Utilities.BottomDialog;
+import com.imagepicker.FilePickUtils;
 import com.imagepicker.LifeCycleCallBackManager;
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
@@ -34,22 +34,23 @@ import com.luseen.spacenavigation.SpaceOnClickListener;
 import org.andresoviedo.android_3d_model_engine.services.wavefront.WavefrontLoader;
 import org.andresoviedo.util.android.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RenderFile extends AppCompatActivity {
+
+/**
+ * AUTHOR   :   MUTHUKUMAR NEELAMEGAM
+ * EMAIL    :   kumar.neelamegam17@gmail.com
+ */
+public class Dashboard extends AppCompatActivity {
 
 
-    //Declaration
-    //***************************************************************************************
-
+    /**
+     * Declaration
+     */
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 1000;
     private static final String SUPPORTED_FILE_TYPES_REGEX = "(?i).*\\.(obj|stl|dae)";
 
@@ -64,7 +65,6 @@ public class RenderFile extends AppCompatActivity {
         LOAD_MODEL, GITHUB, SETTINGS, HELP, ABOUT, EXIT, UNKNOWN, DEMO
     }
 
-
     /**
      * Load file user data
      */
@@ -75,15 +75,15 @@ public class RenderFile extends AppCompatActivity {
     private LifeCycleCallBackManager lifeCycleCallBackManager;
 
 
-
     private static final int MAX_STEP = 4;
 
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
+    public RelativeLayout parentlayout;
 
 
     private String title_array[] = {
-            "3D Model Render",
+            "Partscout",
             "STL (STereoLithography) File Support",
             "Transformations: scaling, rotation, translation",
             "Other Features",
@@ -115,8 +115,9 @@ public class RenderFile extends AppCompatActivity {
     }
 
 
-    //***************************************************************************************
-
+    /**************************************************************************************************************************
+     * Oncreate
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,32 +141,43 @@ public class RenderFile extends AppCompatActivity {
     }
 
 
-    //***************************************************************************************
-
+    /**************************************************************************************************************************
+     * Initializing the components
+     */
     private void GET_INITIALIZE(Bundle savedInstanceState) {
 
-        ButterKnife.bind(this);
+        try {
+            ButterKnife.bind(this);
 
-        spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
-        spaceNavigationView.addSpaceItem(new SpaceItem("HOME", R.drawable.ic_action_home));
-        spaceNavigationView.addSpaceItem(new SpaceItem("LOAD", R.drawable.ic_action_load));
-        spaceNavigationView.shouldShowFullBadgeText(true);
-        spaceNavigationView.setCentreButtonIconColorFilterEnabled(false);
+            spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
+            spaceNavigationView.addSpaceItem(new SpaceItem("HOME", R.drawable.ic_action_home));
+            spaceNavigationView.addSpaceItem(new SpaceItem("LOAD", R.drawable.ic_action_load));
+            spaceNavigationView.shouldShowFullBadgeText(true);
+            spaceNavigationView.setCentreButtonIconColorFilterEnabled(false);
 
-        viewPager = findViewById(R.id.view_pager);
-        // adding bottom dots
-        bottomProgressDots(0);
+            viewPager = findViewById(R.id.view_pager);
+            // adding bottom dots
+            bottomProgressDots(0);
 
-        myViewPagerAdapter = new MyViewPagerAdapter();
-        viewPager.setAdapter(myViewPagerAdapter);
-        viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
+            myViewPagerAdapter = new MyViewPagerAdapter();
+            viewPager.setAdapter(myViewPagerAdapter);
+            viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
+            parentlayout = findViewById(R.id.parent_layout);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
 
+
     /**************************************************************************************************************************
+     /**
+     * DISPLAYING INTRO - APP FEATURES
      */
     LinearLayout dotsLayout;
+
     private void bottomProgressDots(int current_index) {
         dotsLayout = findViewById(R.id.layoutDots);
         ImageView[] dots = new ImageView[MAX_STEP];
@@ -209,12 +221,7 @@ public class RenderFile extends AppCompatActivity {
 
         }
     };
-    /**************************************************************************************************************************
-     */
 
-    /**
-     * View pager adapter
-     */
     public class MyViewPagerAdapter extends PagerAdapter {
         private LayoutInflater layoutInflater;
 
@@ -253,37 +260,39 @@ public class RenderFile extends AppCompatActivity {
             container.removeView(view);
         }
     }
-    //***************************************************************************************
+
+    /**************************************************************************************************************************
+     */
+    private FilePickUtils filePickUtils;
+    private BottomDialog bottomDialog;
 
     private void CONTROLLISTENERS() {
-
-        // LoadFromSDCard();
 
         spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
             public void onCentreButtonClick() {
-                // Toast.makeText(RenderFile.this,"onCentreButtonClick", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(Dashboard.this,"onCentreButtonClick", Toast.LENGTH_SHORT).show();
                 //OpenCamera();
-                // Constants.globalStartIntent(RenderFile.this, CropActivity.class, null);
-                showPictureDialog();
+                // Constants.globalStartIntent(Dashboard.this, CropActivity.class, null);
+                // showPictureDialog();
+
+                showImagePickerDialog(onFileChoose);
             }
 
             @Override
             public void onItemClick(int itemIndex, String itemName) {
-                // Toast.makeText(RenderFile.this, itemIndex + " " + itemName, Toast.LENGTH_SHORT).show();
+
                 if (itemIndex == 1)//Load model from sd card
                 {
-                   // LoadFromSDCard();
                     loadModel();
                 }
             }
 
             @Override
             public void onItemReselected(int itemIndex, String itemName) {
-                // Toast.makeText(RenderFile.this, itemIndex + " " + itemName, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(Dashboard.this, itemIndex + " " + itemName, Toast.LENGTH_SHORT).show();
                 if (itemIndex == 1)//Load model from sd card
                 {
-                   // LoadFromSDCard();
                     loadModel();
                 }
             }
@@ -293,24 +302,96 @@ public class RenderFile extends AppCompatActivity {
     }
 
     /**************************************************************************************************************************
+     *
+     * SELECTING IMAGES FROM CAMERA AND GALLERY
+     *
+     */
+
+    private FilePickUtils.OnFileChoose onFileChoose = new FilePickUtils.OnFileChoose() {
+        @Override
+        public void onFileChoose(String s, int i, int i1) {
+            bottomDialog.dismiss();
+            //ivImage.setImageURI(Uri.fromFile(new File(s)));
+            //Constants.Logger(String.valueOf(Uri.fromFile(new File(s))));
+
+                SendFileToServer(s);
+
+
+            //Intent nextdraw = new Intent(Dashboard.this, CropActivity.class);
+            //nextdraw.putExtra("ImageUrl", String.valueOf(Uri.fromFile(new File(s))));
+            //nextdraw.putExtra("OptionType", "2");
+            //startActivity(nextdraw);
+
+        }
+
+    };
+
+    public void showImagePickerDialog(FilePickUtils.OnFileChoose onFileChoose) {
+        filePickUtils = new FilePickUtils(this, onFileChoose);
+        lifeCycleCallBackManager = filePickUtils.getCallBackManager();
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_image_options, null);
+        bottomDialog = new BottomDialog(Dashboard.this);
+        bottomDialog.setContentView(bottomSheetView);
+        final TextView tvCamera = bottomSheetView.findViewById(R.id.tvCamera);
+        final TextView tvGallery = bottomSheetView.findViewById(R.id.tvGallery);
+        tvCamera.setOnClickListener(onCameraListener);
+        tvGallery.setOnClickListener(onGalleryListener);
+        bottomDialog.show();
+    }
+
+    private View.OnClickListener onCameraListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //filePickUtils.requestImageCamera(CAMERA_PERMISSION, false, false);
+        }
+    };
+
+    private View.OnClickListener onGalleryListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+
+            SendFileToServer("");
+
+            //filePickUtils.requestImageGallery(STORAGE_PERMISSION_IMAGE, false, false);
+        }
+    };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (lifeCycleCallBackManager != null) {
+            lifeCycleCallBackManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+
+    /**************************************************************************************************************************
+     * STL FILE PROCESSINGS AND ITS METHODS
      */
 
     private void loadModel() {
-        ContentUtils.showListDialog(this, "Options", new String[]{"Embedded Models", "App Repository",
-                "External Storage ", "Content Provider"}, (DialogInterface dialog, int which) -> {
-            if (which == 0) {
-                loadModelFromAssets();
-            } else if (which == 1) {
-                loadModelFromRepository();
-            } else if (which == 2) {
-                loadModelFromSdCard();
-            } else {
-                loadModelFromContentProvider();
-            }
-        });
+
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_options, null);
+        bottomDialog = new BottomDialog(Dashboard.this);
+        bottomDialog.setContentView(bottomSheetView);
+        final TextView tvOption1 = bottomSheetView.findViewById(R.id.tvEmbeddedModels);
+        final TextView tvOption2 = bottomSheetView.findViewById(R.id.tvRepository);
+        final TextView tvOption3 = bottomSheetView.findViewById(R.id.tvExternalStorage);
+        final TextView tvOption4 = bottomSheetView.findViewById(R.id.tvContentProvider);
+
+        tvOption1.setOnClickListener(v -> loadModelFromAssets());
+
+        //  tvOption2.setOnClickListener(v -> loadModelFromRepository());
+
+        tvOption3.setOnClickListener(v -> loadModelFromSdCard());
+
+        // tvOption4.setOnClickListener(v -> loadModelFromContentProvider());
+
+        bottomDialog.show();
+
 
     }
-
 
     private void loadModelFromAssets() {
         AssetUtils.createChooserDialog(this, "Select file", null, "models", "(?i).*\\.(obj|stl|dae)",
@@ -334,7 +415,7 @@ public class RenderFile extends AppCompatActivity {
         private final ProgressDialog dialog;
 
         public LoadRepoIndexTask() {
-            this.dialog = new ProgressDialog(RenderFile.this);
+            this.dialog = new ProgressDialog(Dashboard.this);
         }
 
         @Override
@@ -352,14 +433,14 @@ public class RenderFile extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<String> strings) {
-            if (dialog.isShowing()){
+            if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-            if (strings == null){
-                Toast.makeText(RenderFile.this, "Couldn't load repo index", Toast.LENGTH_LONG).show();
+            if (strings == null) {
+                Toast.makeText(Dashboard.this, "Couldn't load repo index", Toast.LENGTH_LONG).show();
                 return;
             }
-            ContentUtils.createChooserDialog(RenderFile.this, "Select file", null,
+            ContentUtils.createChooserDialog(Dashboard.this, "Select file", null,
                     strings, SUPPORTED_FILE_TYPES_REGEX,
                     (String file) -> {
                         if (file != null) {
@@ -438,115 +519,77 @@ public class RenderFile extends AppCompatActivity {
     }
 
 
-
     /**************************************************************************************************************************
-     * TO load camera and browse files
+     * Sending image to server
      */
 
-    private int GALLERY = 1, CAMERA = 1777;
+    BottomSheetDialog dialog;
 
-    public void showPictureDialog() {
+    private void SendFileToServer(String filePath) {
+
+        if (Constants.CheckNetwork(Dashboard.this)) {
+
+            ShowDialog();
+
+            Thread mThread = new Thread() {
+                @Override
+                public void run() {
+                    try {
 
 
-        try {
-            AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
-            pictureDialog.setTitle("Choose");
-            String[] pictureDialogItems = {
-                    "Capture",
-                    "Browse"};
-            pictureDialog.setItems(pictureDialogItems,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case 0:
-                                    takePhotoFromCamera();
-                                    break;
-                                case 1:
-                                    choosePhotoFromGallery();
-                                    break;
-                            }
-                        }
-                    });
-            pictureDialog.show();
+                        MatchClient matchClient = new MatchClient();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+                        matchClient.requestMatching(filePath, Dashboard.this, parentlayout, dialog);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            mThread.start();
+        } else {
+            Constants.ShowInternetDialog(Dashboard.this);
         }
-    }
-
-
-    public void choosePhotoFromGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        startActivityForResult(galleryIntent, GALLERY);
-    }
-
-    private void takePhotoFromCamera() {
-      /*  Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, CAMERA);
-*/
-        Constants.globalStartIntent(RenderFile.this, CropActivity.class, null,1);
 
 
 
     }
 
-    /**************************************************************************************************************************
-      */
+
+    /**
+     * activity results
+     */
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (lifeCycleCallBackManager != null) {
+            lifeCycleCallBackManager.onActivityResult(requestCode, resultCode, data);
+        }
+
         if (resultCode == this.RESULT_CANCELED) {
             return;
         }
-        if (requestCode == GALLERY) {
-            if (data != null) {
-                Uri contentURI = data.getData();
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    String path = saveImage(bitmap);
-                 //   Toast.makeText(RenderFile.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                    // iv_attachment.setImageBitmap(bitmap);
-                    Intent nextdraw = new Intent(RenderFile.this, CropActivity.class);
-                    nextdraw.putExtra("ImageUrl", path);
-                    nextdraw.putExtra("OptionType", "1");
-                    startActivity(nextdraw);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(RenderFile.this, "Failed!", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        } else if (requestCode == CAMERA) {
-
-
-            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            // iv_attachment.setImageBitmap(thumbnail);
-            String path = saveImage(thumbnail);
-           // Toast.makeText(RenderFile.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-            Intent nextdraw = new Intent(RenderFile.this, CropActivity.class);
-            nextdraw.putExtra("ImageUrl", path);
-            nextdraw.putExtra("OptionType", "2");
-            startActivity(nextdraw);
-
-        }
-
 
 
         //Load stl, obj files
         ContentUtils.setThreadActivity(this);
         switch (requestCode) {
+
+
             case REQUEST_READ_EXTERNAL_STORAGE:
                 loadModelFromSdCard();
                 break;
+
+
             case REQUEST_INTERNET_ACCESS:
                 loadModelFromRepository();
                 break;
+
+
             case REQUEST_CODE_OPEN_FILE:
                 if (resultCode != RESULT_OK) {
                     return;
@@ -572,6 +615,8 @@ public class RenderFile extends AppCompatActivity {
                             ".stl)", "Collada (*.dae)"}, (dialog, which) -> askForRelatedFiles(which));
                 }
                 break;
+
+
             case REQUEST_CODE_OPEN_MATERIAL:
                 if (resultCode != RESULT_OK || data.getData() == null) {
                     launchModelRendererActivity(getUserSelectedModel());
@@ -598,6 +643,8 @@ public class RenderFile extends AppCompatActivity {
                             }
                         });
                 break;
+
+
             case REQUEST_CODE_OPEN_TEXTURE:
                 if (resultCode != RESULT_OK || data.getData() == null) {
                     launchModelRendererActivity(getUserSelectedModel());
@@ -612,11 +659,22 @@ public class RenderFile extends AppCompatActivity {
     }
 
 
+    private void ShowDialog() {
+        View view = getLayoutInflater().inflate(R.layout.fragment_bottom_sheet_dialog, null);
+        dialog = new BottomSheetDialog(Dashboard.this);
+        dialog.setContentView(view);
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+
+/*
 
     public String saveImage(Bitmap myBitmap) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            //myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+            Bitmap OutImage = Bitmap.createScaledBitmap(myBitmap, 1000, 1000, true);
+            String path = MediaStore.Images.Media.insertImage(getContentResolver(), OutImage, "Title", null);
 
             File wallpaperDirectory = new File(Constants.DATABASE_FILE_PATH + File.separator + "Data" + File.separator);
             // have the object build the directory structure, if needed.
@@ -625,16 +683,12 @@ public class RenderFile extends AppCompatActivity {
             }
 
             try {
-                File f = new File(wallpaperDirectory, Calendar.getInstance().getTimeInMillis() + ".jpg");
+                File f = new File(wallpaperDirectory, Calendar.getInstance().getTimeInMillis() + ".png");
                 f.createNewFile();
                 FileOutputStream fo = new FileOutputStream(f);
                 fo.write(bytes.toByteArray());
-          /*      MediaScannerConnection.scanFile(this,
-                        new String[]{f.getPath()},
-                        new String[]{"image/jpeg"}, null);*/
                 fo.close();
                 Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
-                //Baseconfig.LogoImgPath = f.getAbsolutePath();
 
                 return f.getAbsolutePath();
             } catch (Exception e1) {
@@ -645,9 +699,11 @@ public class RenderFile extends AppCompatActivity {
         }
         return "";
     }
+*/
 
-    //***************************************************************************************
-
+    /**************************************************************************************************************************
+     */
+/*
     private void LoadFromSDCard() {
 
 
@@ -664,9 +720,10 @@ public class RenderFile extends AppCompatActivity {
                 });
 
     }
+*/
 
-    //***************************************************************************************
-
+    /**************************************************************************************************************************
+     */
     private void launchModelRendererActivity(Uri uri) {
         Log.i("Menu", "Launching renderer for '" + uri + "'");
         Intent intent = new Intent(getApplicationContext(), ModelActivity.class);
@@ -683,15 +740,15 @@ public class RenderFile extends AppCompatActivity {
     }
 
 
-    //***************************************************************************************
-
+    /**************************************************************************************************************************
+     */
     @Override
     public void onBackPressed() {
-       // super.onBackPressed();
-        Constants.ExitSweetDialog(RenderFile.this, RenderFile.class);
+        // super.onBackPressed();
+        Constants.ExitSweetDialog(Dashboard.this, Dashboard.class);
     }
 
 
-    //***************************************************************************************
-
+    /**************************************************************************************************************************
+     */
 }//END

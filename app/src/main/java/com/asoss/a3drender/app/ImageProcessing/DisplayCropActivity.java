@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.asoss.a3drender.app.CoreModules.Constants;
-import com.asoss.a3drender.app.CoreModules.RenderFile;
+import com.asoss.a3drender.app.CoreModules.Dashboard;
 import com.asoss.a3drender.app.R;
 
 public class DisplayCropActivity extends AppCompatActivity {
@@ -30,7 +30,7 @@ public class DisplayCropActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        Constants.globalStartIntent(DisplayCropActivity.this, RenderFile.class, null,2);
+        Constants.globalStartIntent(DisplayCropActivity.this, Dashboard.class, null,2);
         super.onBackPressed();
     }
 }//END

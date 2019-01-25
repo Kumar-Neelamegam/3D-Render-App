@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/root"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/default_padding_25"
+        android:layout_height="wrap_content">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:background="@color/transparent_colorPrimary"
+            android:text="Options"/>
+
+    <View
+            android:background="@color/md_black_1000"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"/>
+    <TextView
+            android:drawablePadding="@dimen/default_padding_5"
+            android:drawableLeft="@drawable/ic_option_model_1"
+            android:id="@+id/tvEmbeddedModels"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:padding="10dp"
+            android:text="Embedded Models"/>
+
+    <TextView
+            android:id="@+id/tvRepository"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:padding="10dp" android:drawablePadding="@dimen/default_padding_5"
+            android:drawableLeft="@drawable/ic_option_repo_2"
+            android:text="Repository"/>
+    <TextView
+            android:id="@+id/tvExternalStorage" android:drawablePadding="@dimen/default_padding_5"
+            android:drawableLeft="@drawable/ic_option_storage_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:padding="10dp"
+            android:text="External Storage"/>
+
+    <TextView
+            android:id="@+id/tvContentProvider"
+            android:layout_width="match_parent" android:drawablePadding="@dimen/default_padding_5"
+            android:drawableLeft="@drawable/ic_option_content_4"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:padding="10dp"
+            android:text="Content Provider"/>
+
+
+</LinearLayout>

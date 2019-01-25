@@ -8,8 +8,8 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.asoss.a3drender.app"
-      //  minSdkVersion 16
-        minSdkVersion 21
+       minSdkVersion 16
+     //   minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -58,6 +58,8 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
     implementation project(':engine')
     implementation 'com.github.armcha:SpaceNavigationView:1.6.0'
-    implementation 'com.github.himangipatel:ImagePickerUtil:0.1.9'
-
+    implementation 'com.creativeelites:androidexternalfilewriter:1.4'
+    implementation 'com.github.ybq:Android-SpinKit:1.2.0'
+    implementation project(':imagepicker')
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 }

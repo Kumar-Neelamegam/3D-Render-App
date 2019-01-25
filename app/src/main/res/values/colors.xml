@@ -4,7 +4,7 @@
     <color name="colorAccent">#d1d8e0</color>
     <color name="colorPrimaryDark">#474B4F</color>
 
-
+    <color name="transparent_colorPrimary">#8099ca3c</color>
     <!--reds-->
     <color name="md_red_50">#FFEBEE</color>
     <color name="md_red_100">#FFCDD2</color>
@@ -299,5 +299,6 @@
     <color name="md_blue_grey_800">#37474F</color>
     <color name="md_blue_grey_900">#263238</color>
     <color name="overlay_dark_30">#4D000000</color>
+    <color name="white">#fff</color>
 
 </resources>

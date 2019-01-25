@@ -1,41 +1,23 @@
 package com.asoss.a3drender.app.ImageProcessing;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.hardware.camera2.*;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.ImageReader;
 import android.os.*;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.*;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 import com.asoss.a3drender.app.CoreModules.Constants;
-import com.asoss.a3drender.app.CoreModules.RenderFile;
+import com.asoss.a3drender.app.CoreModules.Dashboard;
 import com.asoss.a3drender.app.R;
 import com.asoss.a3drender.app.Utilities.CropModel;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
 public class CropActivity extends AppCompatActivity implements View.OnTouchListener, View.OnClickListener {
 
@@ -265,6 +247,7 @@ public class CropActivity extends AppCompatActivity implements View.OnTouchListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ok:
+
                 save();
 
             default:
@@ -320,8 +303,9 @@ public class CropActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public void onBackPressed() {
 
-        Constants.globalStartIntent(CropActivity.this, RenderFile.class, null,1);
-
+        Constants.globalStartIntent(CropActivity.this, Dashboard.class, null,2);
 
     }
+
+
 }//END

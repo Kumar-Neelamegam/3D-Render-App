@@ -21,8 +21,9 @@
 
 
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                      android:text="3D Render
+                      android:text="Partscout
 This app has following features.
+* Capture the object and grabcut background
 * Load .stl file from sdcard
 * Switch to different rendering features"
                       android:padding="@dimen/default_padding_10"

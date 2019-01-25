@@ -41,11 +41,34 @@
                                 </PersistentState>
                               </value>
                             </entry>
-                          </map>
-                        </option>
-                        <option name="values">
-                          <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
+                            <entry key="launcher">
+                              <value>
+                                <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="foregroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="59" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="99ca3c" />
+                                      <entry key="foregroundImage" value="D:\ANDROID-KUMAR-2018\Downloads\icons8-eye-80.png" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
                           </map>
                         </option>
                       </PersistentState>
@@ -71,7 +94,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_brightness_1_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_photo_library_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -82,9 +105,9 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_vector_transform" />
-                            <entry key="sourceFile" value="C:\Users\KUMAR NEELAMEGAM\Desktop\Temp\if_interface-70_809255.svg" />
+                            <entry key="color" value="99ca3c" />
+                            <entry key="outputName" value="ic_option_storage_3" />
+                            <entry key="sourceFile" value="D:\ANDROID-KUMAR-2018\Downloads\option_storage_3.svg" />
                           </map>
                         </option>
                       </PersistentState>

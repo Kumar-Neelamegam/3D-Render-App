@@ -2,7 +2,6 @@ package com.asoss.a3drender.app.CoreModules;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -70,8 +69,8 @@ public class SplashActivity extends CoreActivity {
 
         ButterKnife.bind(this);
 
-        YoYo.with(Techniques.FadeInRight)
-                .duration(1500)
+            YoYo.with(Techniques.BounceIn)
+                .duration(2500)
                 .playOn(findViewById(R.id.img_logo));
 
 
@@ -136,7 +135,7 @@ public class SplashActivity extends CoreActivity {
                 handler.post(() -> {
 
                     progressbar.setVisibility(View.GONE);
-                    Constants.globalStartIntent(SplashActivity.this, RenderFile.class, null,1);
+                    Constants.globalStartIntent(SplashActivity.this, Dashboard.class, null,1);
 
                 });
             }

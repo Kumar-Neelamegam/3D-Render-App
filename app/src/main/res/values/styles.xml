@@ -6,6 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+
+        <item name="android:textViewStyle">@style/TextGlobal</item>
+        <item name="android:editTextStyle">@style/TextGlobal</item>
+
     </style>
 
 
@@ -16,6 +21,11 @@
         <item name="android:progressDrawable">@drawable/custom_progress_bar_horizontal</item>
     </style>
 
+    <style name="TextGlobal" parent="@style/TextAppearance.AppCompat.Medium">
+
+        <item name="android:fontFamily">@font/worksans_light</item>
+        <item name="android:textColor">@color/md_black_1000</item>
+    </style>
 
 
 </resources>
