@@ -8,13 +8,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.asoss.a3drender.app.NetworkUtils.MatchClient;
+import com.asoss.a3drender.app.ImageProcessing.PreviewActivity;
 import com.asoss.a3drender.app.R;
 import com.asoss.a3drender.app.RenderUtils.ModelActivity;
 import com.asoss.a3drender.app.Utilities.BottomDialog;
@@ -39,6 +39,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.imagepicker.FilePickUtils.CAMERA_PERMISSION;
+import static com.imagepicker.FilePickUtils.STORAGE_PERMISSION_IMAGE;
 
 
 /**
@@ -75,6 +78,7 @@ public class Dashboard extends AppCompatActivity {
     private LifeCycleCallBackManager lifeCycleCallBackManager;
 
 
+
     private static final int MAX_STEP = 4;
 
     private ViewPager viewPager;
@@ -95,7 +99,7 @@ public class Dashboard extends AppCompatActivity {
             "wireframe, point mode, pinch and zoom",
     };
     private int about_images_array[] = {
-            R.drawable.ic_vector_3dmodel,
+            R.drawable.eye,
             R.drawable.ic_vector_stlfiles,
             R.drawable.ic_vector_transform,
             R.drawable.ic_vector_features
@@ -127,6 +131,8 @@ public class Dashboard extends AppCompatActivity {
         try {
             GET_INITIALIZE(savedInstanceState);
             CONTROLLISTENERS();
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -149,9 +155,11 @@ public class Dashboard extends AppCompatActivity {
         try {
             ButterKnife.bind(this);
 
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
             spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
             spaceNavigationView.addSpaceItem(new SpaceItem("HOME", R.drawable.ic_action_home));
-            spaceNavigationView.addSpaceItem(new SpaceItem("LOAD", R.drawable.ic_action_load));
+            spaceNavigationView.addSpaceItem(new SpaceItem("OTHERS", R.drawable.ic_action_load));
             spaceNavigationView.shouldShowFullBadgeText(true);
             spaceNavigationView.setCentreButtonIconColorFilterEnabled(false);
 
@@ -167,6 +175,41 @@ public class Dashboard extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+    }
+
+    private void CONTROLLISTENERS() {
+
+        spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
+            @Override
+            public void onCentreButtonClick() {
+                // Toast.makeText(Dashboard.this,"onCentreButtonClick", Toast.LENGTH_SHORT).show();
+                //OpenCamera();
+                // Constants.globalStartIntent(Dashboard.this, CropActivity.class, null);
+                // showPictureDialog();
+
+                showImagePickerDialog(onFileChoose);
+            }
+
+            @Override
+            public void onItemClick(int itemIndex, String itemName) {
+
+                if (itemIndex == 1)//Load model from sd card
+                {
+                    loadModel();
+                }
+            }
+
+            @Override
+            public void onItemReselected(int itemIndex, String itemName) {
+
+                if (itemIndex == 1)//Load model from sd card
+                {
+                    loadModel();
+                }
+            }
+        });
 
 
     }
@@ -266,40 +309,6 @@ public class Dashboard extends AppCompatActivity {
     private FilePickUtils filePickUtils;
     private BottomDialog bottomDialog;
 
-    private void CONTROLLISTENERS() {
-
-        spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
-            @Override
-            public void onCentreButtonClick() {
-                // Toast.makeText(Dashboard.this,"onCentreButtonClick", Toast.LENGTH_SHORT).show();
-                //OpenCamera();
-                // Constants.globalStartIntent(Dashboard.this, CropActivity.class, null);
-                // showPictureDialog();
-
-                showImagePickerDialog(onFileChoose);
-            }
-
-            @Override
-            public void onItemClick(int itemIndex, String itemName) {
-
-                if (itemIndex == 1)//Load model from sd card
-                {
-                    loadModel();
-                }
-            }
-
-            @Override
-            public void onItemReselected(int itemIndex, String itemName) {
-                // Toast.makeText(Dashboard.this, itemIndex + " " + itemName, Toast.LENGTH_SHORT).show();
-                if (itemIndex == 1)//Load model from sd card
-                {
-                    loadModel();
-                }
-            }
-        });
-
-
-    }
 
     /**************************************************************************************************************************
      *
@@ -311,16 +320,11 @@ public class Dashboard extends AppCompatActivity {
         @Override
         public void onFileChoose(String s, int i, int i1) {
             bottomDialog.dismiss();
-            //ivImage.setImageURI(Uri.fromFile(new File(s)));
-            //Constants.Logger(String.valueOf(Uri.fromFile(new File(s))));
 
-                SendFileToServer(s);
-
-
-            //Intent nextdraw = new Intent(Dashboard.this, CropActivity.class);
-            //nextdraw.putExtra("ImageUrl", String.valueOf(Uri.fromFile(new File(s))));
-            //nextdraw.putExtra("OptionType", "2");
-            //startActivity(nextdraw);
+            Intent nextdraw = new Intent(Dashboard.this, PreviewActivity.class);
+            nextdraw.putExtra("ImageUrl", s);
+            nextdraw.putExtra("OptionType", "2");
+            startActivity(nextdraw);
 
         }
 
@@ -342,7 +346,8 @@ public class Dashboard extends AppCompatActivity {
     private View.OnClickListener onCameraListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            //filePickUtils.requestImageCamera(CAMERA_PERMISSION, false, false);
+            filePickUtils.requestImageCamera(CAMERA_PERMISSION, false, false);
+            bottomDialog.dismiss();
         }
     };
 
@@ -350,10 +355,9 @@ public class Dashboard extends AppCompatActivity {
         @Override
         public void onClick(View view) {
 
+            filePickUtils.requestImageGallery(STORAGE_PERMISSION_IMAGE, false, false);
+            bottomDialog.dismiss();
 
-            SendFileToServer("");
-
-            //filePickUtils.requestImageGallery(STORAGE_PERMISSION_IMAGE, false, false);
         }
     };
 
@@ -367,7 +371,7 @@ public class Dashboard extends AppCompatActivity {
 
 
     /**************************************************************************************************************************
-     * STL FILE PROCESSINGS AND ITS METHODS
+     * STL FILE PROCESSING AND ITS METHODS
      */
 
     private void loadModel() {
@@ -380,11 +384,30 @@ public class Dashboard extends AppCompatActivity {
         final TextView tvOption3 = bottomSheetView.findViewById(R.id.tvExternalStorage);
         final TextView tvOption4 = bottomSheetView.findViewById(R.id.tvContentProvider);
 
-        tvOption1.setOnClickListener(v -> loadModelFromAssets());
+
+        tvOption1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                bottomDialog.dismiss();
+                loadModelFromAssets();
+
+            }
+        });
+
+        tvOption3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                bottomDialog.dismiss();
+                loadModelFromSdCard();
+
+            }
+        });
+
 
         //  tvOption2.setOnClickListener(v -> loadModelFromRepository());
 
-        tvOption3.setOnClickListener(v -> loadModelFromSdCard());
 
         // tvOption4.setOnClickListener(v -> loadModelFromContentProvider());
 
@@ -525,37 +548,6 @@ public class Dashboard extends AppCompatActivity {
 
     BottomSheetDialog dialog;
 
-    private void SendFileToServer(String filePath) {
-
-        if (Constants.CheckNetwork(Dashboard.this)) {
-
-            ShowDialog();
-
-            Thread mThread = new Thread() {
-                @Override
-                public void run() {
-                    try {
-
-
-                        MatchClient matchClient = new MatchClient();
-
-                        matchClient.requestMatching(filePath, Dashboard.this, parentlayout, dialog);
-
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            mThread.start();
-        } else {
-            Constants.ShowInternetDialog(Dashboard.this);
-        }
-
-
-
-    }
-
 
     /**
      * activity results
@@ -659,13 +651,6 @@ public class Dashboard extends AppCompatActivity {
     }
 
 
-    private void ShowDialog() {
-        View view = getLayoutInflater().inflate(R.layout.fragment_bottom_sheet_dialog, null);
-        dialog = new BottomSheetDialog(Dashboard.this);
-        dialog.setContentView(view);
-        dialog.setCancelable(false);
-        dialog.show();
-    }
 
 /*
 
@@ -725,10 +710,12 @@ public class Dashboard extends AppCompatActivity {
     /**************************************************************************************************************************
      */
     private void launchModelRendererActivity(Uri uri) {
+
         Log.i("Menu", "Launching renderer for '" + uri + "'");
         Intent intent = new Intent(getApplicationContext(), ModelActivity.class);
         intent.putExtra("uri", uri.toString());
         intent.putExtra("immersiveMode", "true");
+        intent.putExtra("verify", false);
 
         // content provider case
         if (!loadModelParameters.isEmpty()) {

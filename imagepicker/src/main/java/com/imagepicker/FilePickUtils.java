@@ -109,7 +109,8 @@ public class FilePickUtils implements LifeCycleCallBackManager {
         Intent intent4 = new Intent(activity, NormalFilePickActivity.class);
         intent4.putExtra(Constant.MAX_NUMBER, maxSelection);
 //        intent4.putExtra(IS_NEED_FOLDER_LIST, true);
-        intent4.putExtra(NormalFilePickActivity.SUFFIX,/*new String[]{"pdf"}*/suffix);
+       // intent4.putExtra(NormalFilePickActivity.SUFFIX,/*new String[]{"pdf"}*/suffix);
+        intent4.putExtra(NormalFilePickActivity.SUFFIX,new String[]{"png"});
         startActivityForResult(intent4, Constant.REQUEST_CODE_PICK_FILE);
     }
 
@@ -198,8 +199,7 @@ public class FilePickUtils implements LifeCycleCallBackManager {
                     photoFile);*/
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUrl);//imageUrl
-            intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION,
-                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION,ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             startActivityForResult(intent, CAMERA_PICTURE);
@@ -569,7 +569,7 @@ public class FilePickUtils implements LifeCycleCallBackManager {
             exception.printStackTrace();
         }
         try {
-            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.RGB_565);
+            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.ARGB_8888);
         } catch (OutOfMemoryError exception) {
             exception.printStackTrace();
         }
@@ -685,4 +685,5 @@ public class FilePickUtils implements LifeCycleCallBackManager {
     public interface OnFileChoose {
         void onFileChoose(String fileUri, int requestCode, int size);
     }
-}
+
+}//END

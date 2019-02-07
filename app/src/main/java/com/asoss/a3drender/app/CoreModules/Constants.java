@@ -19,11 +19,13 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.asoss.a3drender.app.GlobalObjects.DataObjects;
 import com.asoss.a3drender.app.R;
 import com.asoss.a3drender.app.Utilities.CustomDialog;
 import com.asoss.a3drender.app.Utilities.CustomIntent;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class Constants {
 
@@ -36,8 +38,9 @@ public class Constants {
     public static String Preferred_Language_Key = "Preferred_Language_Key";
     public static String Preferred_Language_Code = "Preferred_Language_Code";
     public static String Preferred_Language_Status = "Preferred_Language_Status";
+    public static ArrayList<DataObjects> dataObjectsItems;
 
-    public static String Server_IP = "192.168.0.6";
+    public static String Server_IP = "192.168.0.7";
     public static int Server_Port = 5005;
 
     public Constants getInstance() {

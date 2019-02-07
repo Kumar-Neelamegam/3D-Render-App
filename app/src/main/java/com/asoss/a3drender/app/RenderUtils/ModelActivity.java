@@ -1,23 +1,29 @@
 package com.asoss.a3drender.app.RenderUtils;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
+import android.os.*;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.Toast;
+import com.asoss.a3drender.app.Adapters.RecyclerViewHorizontalListAdapter;
+import com.asoss.a3drender.app.CoreModules.Constants;
+import com.asoss.a3drender.app.GlobalObjects.DataObjects;
+import com.asoss.a3drender.app.GlobalObjects.ItemClickListener;
 import com.asoss.a3drender.app.R;
 import org.andresoviedo.util.android.ContentUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This activity represents the container for our 3D viewer.
@@ -26,6 +32,9 @@ import java.io.IOException;
  */
 public class ModelActivity extends AppCompatActivity {
 
+
+    /*******************************************************************************************************************
+     */
     private static final int REQUEST_CODE_LOAD_TEXTURE = 1000;
 
     /**
@@ -45,12 +54,18 @@ public class ModelActivity extends AppCompatActivity {
      */
     private float[] backgroundColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
 
-    private ModelSurfaceView gLView;
+    // private ModelSurfaceView gLView;
 
     private SceneLoader scene;
 
     private Handler handler;
 
+    ModelSurfaceView gLView;
+
+    boolean IsMatchFinder = false;
+
+    /*******************************************************************************************************************
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +78,7 @@ public class ModelActivity extends AppCompatActivity {
             }
             this.paramType = b.getString("type") != null ? Integer.parseInt(b.getString("type")) : -1;
             this.immersiveMode = "true".equalsIgnoreCase(b.getString("immersiveMode"));
+            this.IsMatchFinder = b.getBoolean("verify");
             try {
                 String[] backgroundColors = b.getString("backgroundColor").split(" ");
                 backgroundColor[0] = Float.parseFloat(backgroundColors[0]);
@@ -85,13 +101,26 @@ public class ModelActivity extends AppCompatActivity {
         }
         scene.init();
 
-        // Create a GLSurfaceView instance and set it
-        // as the ContentView for this Activity.
+
         gLView = new ModelSurfaceView(this);
         setContentView(gLView);
 
+        // Create a GLSurfaceView instance and set it
+        // as the ContentView for this Activity.
+        //gLView = new ModelSurfaceView(this);
+
+        //glsContainer= (ModelSurfaceView) this.findViewById(R.id.glSurface);
+        //glsContainer=new ModelSurfaceView(this);
+        //glsContainer.invalidate();
+
+        if (IsMatchFinder == true) {
+            LoadRecyclerList();
+        }
+
+
         // Show the Up button in the action bar.
         setupActionBar();
+
 
         // TODO: Alert user when there is no multitouch support (2 fingers). He won't be able to rotate or zoom
         ContentUtils.printTouchCapabilities(getPackageManager());
@@ -99,6 +128,75 @@ public class ModelActivity extends AppCompatActivity {
         setupOnSystemVisibilityChangeListener();
     }
 
+    /*******************************************************************************************************************
+     */
+    /**
+     * Loading recyclerview  from the json response
+     */
+    RecyclerView stlFileListView;
+
+    private void LoadRecyclerList() {
+
+        stlFileListView = new RecyclerView(this);
+        LoadReponseListUI(Constants.dataObjectsItems);
+
+    }
+
+    /**
+     * Binding all the data from the response
+     * Loading the stl files in view
+     */
+    private void LoadReponseListUI(ArrayList<DataObjects> dataObjects) {
+
+        try {
+
+            if (dataObjects != null && dataObjects.size() > 0) {
+                // add a divider after each item for more clarity
+                stlFileListView.addItemDecoration(new DividerItemDecoration(ModelActivity.this, LinearLayoutManager.HORIZONTAL));
+                RecyclerViewHorizontalListAdapter stlviewadpter = new RecyclerViewHorizontalListAdapter(dataObjects, ModelActivity.this);
+                LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(ModelActivity.this, LinearLayoutManager.HORIZONTAL, false);
+                stlFileListView.setLayoutManager(horizontalLayoutManager);
+                stlFileListView.setAdapter(stlviewadpter);
+                stlFileListView.setItemAnimator(new DefaultItemAnimator());
+                stlviewadpter.notifyDataSetChanged();
+                stlviewadpter.setClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, List<DataObjects> horizontalStlList) {
+
+                        // Toast.makeText(ModelActivity.this,  "Clicked : %d "+String.valueOf(position) , Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(ModelActivity.this,  "Clicked : %d "+  horizontalStlList.get(position).getFileLocation() , Toast.LENGTH_SHORT).show();
+
+                        LoadStlFile(horizontalStlList.get(position).getFileLocation());
+
+                    }
+                });
+
+                addContentView(stlFileListView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+
+
+            } else {
+                Constants.SnackBar(ModelActivity.this, "Data not available..", gLView, 2);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Constants.SnackBar(ModelActivity.this, "Network Error..", gLView, 2);
+        }
+
+    }
+
+    private void LoadStlFile(String FileName) {
+
+        this.paramUri = Uri.fromFile(new File(FileName));
+        scene = new SceneLoader(this);
+        scene.init();
+
+    }
+
+
+    /*******************************************************************************************************************
+     */
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
@@ -240,9 +338,12 @@ public class ModelActivity extends AppCompatActivity {
     }
 
     public ModelSurfaceView getGLView() {
+
         return gLView;
     }
 
+    /*******************************************************************************************************************
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -267,4 +368,7 @@ public class ModelActivity extends AppCompatActivity {
                 }
         }
     }
-}
+
+    /*******************************************************************************************************************
+     */
+}//END

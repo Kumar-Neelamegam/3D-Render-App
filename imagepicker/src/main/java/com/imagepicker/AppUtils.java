@@ -36,8 +36,7 @@ public class AppUtils {
       fileUri.setFile(image);
       //
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        fileUri.setImageUrl(FileProvider.getUriForFile(activity,
-            activity.getApplicationContext().getPackageName(), image));
+        fileUri.setImageUrl(FileProvider.getUriForFile(activity,activity.getApplicationContext().getPackageName(), image));
       } else {
         fileUri.setImageUrl(Uri.parse("file:" + image.getAbsolutePath()));
       }

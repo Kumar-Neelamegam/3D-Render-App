@@ -1,6 +1,8 @@
 package com.asoss.a3drender.app.RenderUtils;
 
+import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 /**
  * This is the actual opengl view. From here we can detect touch gestures for example
@@ -32,6 +34,10 @@ public class ModelSurfaceView extends GLSurfaceView {
 		// setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
 		touchHandler = new TouchController(this, mRenderer);
+	}
+
+	public ModelSurfaceView(Context context, AttributeSet attrs) {
+		super(context, attrs);
 	}
 
 	@Override
