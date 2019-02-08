@@ -16,6 +16,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.asoss.a3drender.app.CoreModules.Constants;
+import com.asoss.a3drender.app.CoreModules.GrabCutter;
 import com.asoss.a3drender.app.GlobalObjects.DataObjects;
 import com.asoss.a3drender.app.NetworkUtils.MatchClient;
 import com.asoss.a3drender.app.R;
@@ -56,7 +57,8 @@ public class PreviewActivity extends AppCompatActivity {
 
     /*******************************************************************************************************************
      */
-    String Str_ImageUrl;
+
+    String OptionType="";
 
     private void GetInitialize() {
 
@@ -70,18 +72,24 @@ public class PreviewActivity extends AppCompatActivity {
 
             Bundle extras = getIntent().getExtras();
             if (extras != null) {
-                Str_ImageUrl = extras.getString("ImageUrl");
 
+                Constants.ServerFilePath = extras.getString("ImageUrl");
+                OptionType = extras.getString("OptionType");// 1 == camera, 2 == gallery
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.RGB_565;
-                // Str_ImageUrl=Environment.getExternalStorageDirectory().getPath() + "/DCIM/img_test/0_2519_1510_01.png";// Static
-                Bitmap bitmap = BitmapFactory.decodeFile(Str_ImageUrl, options);
+                Bitmap bitmap = BitmapFactory.decodeFile(Constants.ServerFilePath, options);
                 imCropImageView.setImageBitmap(bitmap);
 
-            }
+                if(OptionType.toString().equals("1"))//Camera - do grabcutter
+                {
+                    //Do grabcutter tasks !
+                    RunGrabCutter(bitmap);
+                }
 
-            //Do grabcutter tasks !
-            //RunGrabCutter();
+
+            }else{
+                Constants.SnackBar(PreviewActivity.this, "No data found - Try later", parent_layout, 2);
+            }
 
 
         } catch (Exception e) {
@@ -92,8 +100,14 @@ public class PreviewActivity extends AppCompatActivity {
 
     /*******************************************************************************************************************
      */
-    private void RunGrabCutter() {
+    private void RunGrabCutter(Bitmap source) {
 
+        try {
+            GrabCutter grabCutter=new GrabCutter(PreviewActivity.this, source, imCropImageView);
+            grabCutter.Main_GrubCut();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -118,7 +132,8 @@ public class PreviewActivity extends AppCompatActivity {
 
         //Testing by hardcode values
         //SendFileToServer(Environment.getExternalStorageDirectory().getPath() + "/DCIM/img_test/1-0102-998.04-0_01.png");
-        SendFileToServer(Str_ImageUrl);
+        //SendFileToServer(Str_ImageUrl);
+        SendFileToServer(Constants.ServerFilePath);
 
 
     }

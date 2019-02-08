@@ -19,11 +19,8 @@ public class Initialization extends AppCompatActivity {
 
     LocalSharedPreference sharedPreference;
 
-
-    @BindView(R.id.rdbtn_english)
     RadioButton rdbtnEnglish;
-    @BindView(R.id.rbtn_german) RadioButton rbtnGerman;
-    @BindView(R.id.submit_preference)
+    RadioButton rbtnGerman;
     FloatingActionButton submitPreference;
 
     //***************************************************************************************
@@ -50,14 +47,16 @@ public class Initialization extends AppCompatActivity {
 
     private void GetInitialize() {
 
+        rdbtnEnglish = findViewById(R.id.rdbtn_english);
+        rbtnGerman = findViewById(R.id.rbtn_german);
+        submitPreference = findViewById(R.id.submit_preference);
 
-        ButterKnife.bind(this);
+
         sharedPreference = new LocalSharedPreference(Initialization.this);
 
         boolean status = sharedPreference.getBoolean(Constants.Preferred_Language_Status);
-        if(status)
-        {
-            Constants.globalStartIntent(Initialization.this, SplashActivity.class, null,1);
+        if (status) {
+            Constants.globalStartIntent(Initialization.this, SplashActivity.class, null, 1);
         }
 
 
@@ -71,15 +70,13 @@ public class Initialization extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(rdbtnEnglish.isChecked()==true || rbtnGerman.isChecked()==true)
-                {
+                if (rdbtnEnglish.isChecked() == true || rbtnGerman.isChecked() == true) {
                     sharedPreference.setValue(Constants.Preferred_Language_Key, "LANGUAGE");
                     sharedPreference.setValue(Constants.Preferred_Language_Code, "EN");
                     sharedPreference.setBoolean(Constants.Preferred_Language_Status, true);
-                    Constants.globalStartIntent(Initialization.this, SplashActivity.class, null,1);
+                    Constants.globalStartIntent(Initialization.this, SplashActivity.class, null, 1);
 
-                }else if(rdbtnEnglish.isChecked()==false && rbtnGerman.isChecked()==false)
-                {
+                } else if (rdbtnEnglish.isChecked() == false && rbtnGerman.isChecked() == false) {
                     Toast.makeText(Initialization.this, "Choose any language..", Toast.LENGTH_SHORT).show();
                 }
 

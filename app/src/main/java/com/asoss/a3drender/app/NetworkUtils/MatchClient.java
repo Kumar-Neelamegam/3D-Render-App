@@ -6,6 +6,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import com.asoss.a3drender.app.Adapters.RecyclerViewHorizontalListAdapter;
@@ -27,11 +28,12 @@ public class MatchClient {
 
 
     public Socket _socket;
+    public Context ctx;
+    public View view;
+    public ArrayList<DataObjects> dataObjectsItems=new ArrayList<>();
 
-    Context ctx;
-    View view;
-    ArrayList<DataObjects> dataObjectsItems=new ArrayList<>();
-
+    /*******************************************************************************************************************
+     */
 
    //run the matching
     public ArrayList<DataObjects> requestMatching(String FileLocation, Context ctx, View view, BottomSheetDialog bottomDialog) {
@@ -45,13 +47,12 @@ public class MatchClient {
             //open connection
             //TODO use Ip and port from some settings
             _socket = new Socket(Constants.Server_IP, Constants.Server_Port);
+            _socket.setSoTimeout(100000);
 
             //TODO send STATUS to gui ConnectionOpen
             tvMessage.setText("Processing Image..");
-            //load image to send
-            Constants.Logger("Open File");
-            //File file = new File(Environment.getExternalStorageDirectory().getPath()+"/DCIM/1-0102-998.04-0_01.png");
             File file = new File(FileLocation);//Passing image path
+            Log.e("FilePath - Server : ", FileLocation);
 
             //TODO send STATUS to gui Sending Image
             //send image size json
@@ -74,14 +75,14 @@ public class MatchClient {
                 Constants.SnackBar(ctx,"Data processing internal error..", view, 2);
             }
 
-            //tvMessage.setText("Waiting for result..");
+            tvMessage.setText("Waiting for result..");
             //TODO send STATUS to gui Wait For Result
             Constants.Logger("Wait for result json");
+
             String resultJson = receiveNullTerminatedString();
             Constants.Logger("received: " + resultJson);
+
             //TODO send result to your Viewer
-
-
             //TODO send STATUS to gui Receive Stl
             Constants.Logger("Receive stl files");
 
@@ -101,18 +102,18 @@ public class MatchClient {
                 AppExternalFileWriter appExternalFileWriter=new AppExternalFileWriter(ctx);
 
                 //remove all the file before writing the new one
-                File desfolder = new File(Environment.getExternalStorageDirectory().getPath()+"/"+ctx.getString(R.string.app_name));
+                File desfolder = new File(Environment.getExternalStorageDirectory().getPath()+"/"+ctx.getString(R.string.app_name)+"-stl");
                 appExternalFileWriter.deleteDirectory(desfolder);
 
 
-                for (int i = 0; i < arr.length(); i++) {
+                for (int i = 0; i < arr.length(); i++)
+                {
                     JSONObject res = arr.getJSONObject(i);
                     String fileName = res.getString("title");
                     int size = res.getInt("size");
                     int zippedSize = res.getInt("zippedSize");
 
-                    Constants.Logger("receive File: " + fileName
-                            + "(size:" + size + ",zippedSize:" + zippedSize + ")");
+                    Constants.Logger("receive File: " + fileName+ "(size:" + size + ",zippedSize:" + zippedSize + ")");
 
                     byte[] compressedData = receiveBinaryData(zippedSize);
 
@@ -123,7 +124,6 @@ public class MatchClient {
                         Constants.Logger("decompressed size: " + data.length);
 
                         //TODO check that data.length == size OTherwise ERROR, This happens wehn zip and unzip algorthm do not match
-
                         //TODO send stl file to your viewer
                         // Files.write(new File(fileName).toPath(), data);
 
@@ -178,6 +178,13 @@ public class MatchClient {
         return null;
     }
 
+
+
+
+
+    /*******************************************************************************************************************
+     */
+
     /**
      * Bind all the data from the server
      * @param ctx
@@ -195,7 +202,7 @@ public class MatchClient {
             String str_score            = res.getString("score");
             String str_title            = res.getString("title");
             String str_size             = res.getString("size");
-            String str_FileLocation     = Environment.getExternalStorageDirectory().getPath()+"/"+ctx.getString(R.string.app_name)+"/"+str_title;
+            String str_FileLocation     = Environment.getExternalStorageDirectory().getPath()+"/"+ctx.getString(R.string.app_name)+"-stl/"+str_title;
 
             dataObjects=new DataObjects();
             dataObjects.setId(i);
@@ -211,26 +218,44 @@ public class MatchClient {
 
 
 
-    void sendNullTerminatedString(String str) throws IOException {
-        OutputStreamWriter osw = new OutputStreamWriter(_socket.getOutputStream(), "UTF-8");
 
-        osw.write(str);
+    /*******************************************************************************************************************
+     */
 
-        //send null byte
-        osw.write(0);
-
-        osw.flush();
+    public void sendNullTerminatedString(String str) {
+        try {
+            OutputStreamWriter osw = new OutputStreamWriter(_socket.getOutputStream(), "UTF-8");
+            osw.write(str);
+            //send null byte
+            osw.write(0);
+            osw.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    void sendBinaryData(byte[] data) throws IOException {
-        DataOutputStream dos = new DataOutputStream(_socket.getOutputStream());
 
-        dos.write(data, 0, data.length);
 
-        dos.flush();
+
+    /*******************************************************************************************************************
+     */
+
+    public void sendBinaryData(byte[] data)  {
+        try {
+            DataOutputStream dos = new DataOutputStream(_socket.getOutputStream());
+            dos.write(data, 0, data.length);
+            dos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    String receiveNullTerminatedString() throws IOException {
+
+
+    /*******************************************************************************************************************
+     */
+
+    public String receiveNullTerminatedString() throws IOException {
         byte[] buffer = new byte[1024];
 
         InputStream sis = _socket.getInputStream();
@@ -256,8 +281,10 @@ public class MatchClient {
         return str;
 
     }
+    /*******************************************************************************************************************
+     */
 
-    byte[] receiveBinaryData(int numBytes) throws IOException {
+    public byte[] receiveBinaryData(int numBytes) throws IOException {
         byte[] buffer = new byte[1024];
 
         InputStream sis = _socket.getInputStream();

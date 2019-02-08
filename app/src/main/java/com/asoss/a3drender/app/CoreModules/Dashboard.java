@@ -26,6 +26,7 @@ import com.asoss.a3drender.app.ImageProcessing.PreviewActivity;
 import com.asoss.a3drender.app.R;
 import com.asoss.a3drender.app.RenderUtils.ModelActivity;
 import com.asoss.a3drender.app.Utilities.BottomDialog;
+import com.celites.androidexternalfilewriter.AppExternalFileWriter;
 import com.imagepicker.FilePickUtils;
 import com.imagepicker.LifeCycleCallBackManager;
 import com.luseen.spacenavigation.SpaceItem;
@@ -131,7 +132,27 @@ public class Dashboard extends AppCompatActivity {
         try {
             GET_INITIALIZE(savedInstanceState);
             CONTROLLISTENERS();
+            CLEAN_ALL_LOCALFILES();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void CLEAN_ALL_LOCALFILES() {
+
+        try {
+            //File external writer
+            AppExternalFileWriter appExternalFileWriter=new AppExternalFileWriter(this);
+            //deleting stl old files
+            File desfolder = new File(Environment.getExternalStorageDirectory().getPath()+"/"+this.getString(R.string.app_name)+"-stl");
+            appExternalFileWriter.deleteDirectory(desfolder);
+
+            //deleting processed old images
+            desfolder = new File(Environment.getExternalStorageDirectory().getPath()+"/"+this.getString(R.string.app_name)+"-img");
+            appExternalFileWriter.deleteDirectory(desfolder);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -315,6 +336,7 @@ public class Dashboard extends AppCompatActivity {
      * SELECTING IMAGES FROM CAMERA AND GALLERY
      *
      */
+    int flag=1; // 1 = camera, 2 = browse
 
     private FilePickUtils.OnFileChoose onFileChoose = new FilePickUtils.OnFileChoose() {
         @Override
@@ -323,7 +345,14 @@ public class Dashboard extends AppCompatActivity {
 
             Intent nextdraw = new Intent(Dashboard.this, PreviewActivity.class);
             nextdraw.putExtra("ImageUrl", s);
-            nextdraw.putExtra("OptionType", "2");
+            if(flag==0)
+            {
+                nextdraw.putExtra("OptionType", "1");
+            }else
+            {
+                nextdraw.putExtra("OptionType", "2");
+            }
+
             startActivity(nextdraw);
 
         }
@@ -348,6 +377,7 @@ public class Dashboard extends AppCompatActivity {
         public void onClick(View view) {
             filePickUtils.requestImageCamera(CAMERA_PERMISSION, false, false);
             bottomDialog.dismiss();
+            flag=1;
         }
     };
 
@@ -357,7 +387,7 @@ public class Dashboard extends AppCompatActivity {
 
             filePickUtils.requestImageGallery(STORAGE_PERMISSION_IMAGE, false, false);
             bottomDialog.dismiss();
-
+            flag=2;
         }
     };
 

@@ -46,9 +46,8 @@
 
         <activity android:name=".CoreModules.SplashActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".CoreModules.Dashboard"/>
-        <activity android:name=".ImageProcessing.PreviewActivity" android:parentActivityName=".CoreModules.Dashboard"/>
-        <activity android:name=".RenderUtils.ModelActivity" android:label="@string/app_name"
-                  android:parentActivityName=".CoreModules.Dashboard"/>
+        <activity android:name=".ImageProcessing.PreviewActivity" android:label="Partscout-Preview" android:parentActivityName=".CoreModules.Dashboard"/>
+        <activity android:name=".RenderUtils.ModelActivity" android:label="@string/app_name" android:parentActivityName=".CoreModules.Dashboard"/>
 
 
     </application>

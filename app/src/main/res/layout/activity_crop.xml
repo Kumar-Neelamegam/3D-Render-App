@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:id="@+id/parent_preview"
+                android:background="@color/md_black_1000"
                 android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
                 >
 
@@ -11,7 +12,7 @@
             android:layout_width="match_parent"
             android:visibility="visible"
             android:layout_height="match_parent"
-            android:background="#C0C0C0" />
+        />
 
 
     <android.support.design.widget.FloatingActionButton

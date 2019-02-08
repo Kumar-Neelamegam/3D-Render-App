@@ -1,1 +1,1 @@
-include ':app', ':engine', ':imagepicker'
+include ':app', ':RenderEngine', ':ImagePicker', ':openCVLibrary'

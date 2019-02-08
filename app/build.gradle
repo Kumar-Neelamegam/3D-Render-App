@@ -8,12 +8,17 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.asoss.a3drender.app"
-       minSdkVersion 16
-     //   minSdkVersion 21
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++11"
+                version "3.7.1"
+            }
+        }
     }
     buildTypes {
         release {
@@ -30,6 +35,16 @@ android {
 
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
+    dexOptions {
+        javaMaxHeapSize "8g"
     }
 
 }
@@ -52,14 +67,17 @@ dependencies {
     implementation 'com.jakewharton:butterknife:9.0.0-rc1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
 
+    //OpenCVLibrary
+    implementation project(':openCVLibrary')
+
 
     //External libraries
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
-    implementation project(':engine')
+    implementation project(':RenderEngine')//stl render
     implementation 'com.github.armcha:SpaceNavigationView:1.6.0'
     implementation 'com.creativeelites:androidexternalfilewriter:1.4'
     implementation 'com.github.ybq:Android-SpinKit:1.2.0'
-    implementation project(':imagepicker')
+    implementation project(':ImagePicker')
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -25,7 +26,10 @@ import com.asoss.a3drender.app.Utilities.CustomDialog;
 import com.asoss.a3drender.app.Utilities.CustomIntent;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Constants {
 
@@ -39,6 +43,7 @@ public class Constants {
     public static String Preferred_Language_Code = "Preferred_Language_Code";
     public static String Preferred_Language_Status = "Preferred_Language_Status";
     public static ArrayList<DataObjects> dataObjectsItems;
+    public static String ServerFilePath="";
 
     public static String Server_IP = "192.168.0.7";
     public static int Server_Port = 5005;
@@ -209,7 +214,41 @@ public class Constants {
 
     }
     /*******************************************************************************************************************
+     * Save bitmap to storage
      */
+    public static void saveImage(Bitmap finalBitmap) {
 
+        String root = Environment.getExternalStorageDirectory().toString()+"/Partscout";
+        File myDir = new File(root);
+        myDir.mkdirs();
 
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fname = "grabcutt"+ timeStamp +".png";
+
+        File file = new File(myDir, fname);
+        if (file.exists()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ServerFilePath = fname;
+        Log.e("File Path: ", root+File.separator+fname);
+
+    }
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+    /*******************************************************************************************************************
+     */
 }//END
